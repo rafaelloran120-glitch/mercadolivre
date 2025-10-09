@@ -1,5 +1,24 @@
 body {
-  background-color: black;
-  color: purple;
+  background-color: #1a1a1a;
+  color: #ff99c8;
+}
+h1 , h2 {
+  color:#ff4d6d;
+ 
+  text-align: center;
+  font-size:30px;
+}
+
+p {
+  font-size:18;
+  text-align:justify;
+  line-height:1.5;
+}
+ul {
+  list-style-type:square;
+  padding-buttum:5px;
+}
+li {
+  margin-buttom:5px;
 }
 
