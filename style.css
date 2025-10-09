@@ -1,11 +1,11 @@
 @media (max-width:600px;){
 body { font-size:16px; }
 {
-  background-color: #1a1a1a; {
-  color: #ff99c8;
+  background-color:pink; {
+  color: red;
 }
 h1 , h2 {
-  color:#ff4d6d;
+  color:blue;
 
  
   text-align: center;
