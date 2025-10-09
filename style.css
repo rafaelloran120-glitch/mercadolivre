@@ -1,5 +1,6 @@
-body {
-  font-family:Ariel,sans-serif;
+@media (max-width:600px;){
+body { font-size:16px; }
+}
   background-color: #1a1a1a;
   color: #ff99c8;
 }
